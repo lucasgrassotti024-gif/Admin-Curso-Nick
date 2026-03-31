@@ -245,7 +245,12 @@ function salvar(){
 
 /* FINAL */
 function salvarFinal(){
-  db.ref("temas").set(temas);
+  let novo = {};
+  temas.forEach(t => {
+    novo[t.id] = t;
+  });
+
+  db.ref("temas").set(novo);
   alert("Conteúdo salvo com sucesso!");
 }
 
