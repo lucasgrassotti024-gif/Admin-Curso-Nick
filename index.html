@@ -42,6 +42,11 @@ body{
   font-size:3rem;
 }
 
+.header p{
+  margin-top:10px;
+  color:rgba(255,255,255,0.85);
+}
+
 .intro{
   padding:20px 60px;
   max-width:900px;
@@ -60,6 +65,23 @@ body{
   border-radius:18px;
   backdrop-filter:blur(12px);
   background:rgba(255,255,255,0.08);
+  transition:0.4s;
+  position:relative;
+  overflow:hidden;
+}
+
+.item:hover{
+  transform:translateY(-6px);
+  box-shadow:0 25px 60px rgba(0,0,0,0.3);
+}
+
+.item::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:8px;
+  height:100%;
 }
 
 .info{
@@ -69,6 +91,13 @@ body{
 }
 
 .icone{font-size:28px;}
+
+.texto h2{font-size:1.4rem;}
+
+.texto p{
+  font-size:0.95rem;
+  color:rgba(255,255,255,0.75);
+}
 
 .botoes{
   display:flex;
@@ -80,6 +109,7 @@ body{
   border-radius:20px;
   border:none;
   cursor:pointer;
+  font-size:0.8rem;
 }
 
 .editar{background:#3b82f6;color:white;}
@@ -96,6 +126,12 @@ body{
   font-size:1.2rem;
   cursor:pointer;
 }
+
+.footer{
+  text-align:center;
+  padding:25px;
+  color:rgba(255,255,255,0.6);
+}
 </style>
 </head>
 
@@ -103,15 +139,23 @@ body{
 
 <div class="header">
   <h1>Admin - Central de Conhecimento</h1>
+  <p>Gerencie todos os temas da plataforma</p>
 </div>
 
 <div class="intro">
-  Gerencie os temas da plataforma
+  Você pode criar, editar ou excluir qualquer tema.
 </div>
 
 <div class="main">
-  <div class="add" onclick="criarTema()">+ Adicionar tema</div>
+
+  <div class="add" onclick="criarTema()">+ Adicionar novo tema</div>
+
   <div id="lista"></div>
+
+</div>
+
+<div class="footer">
+  © 2026 — Nicholas Grassotti Spolavori
 </div>
 
 <!-- FIREBASE -->
@@ -131,10 +175,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* PADRÃO */
+/* TEMAS PADRÃO */
 let padrao=[
-  {id:"incoterms",titulo:"Incoterms",descricao:"Regras internacionais",emoji:"📦",cor:"#e9c46a"},
-  {id:"sinistro",titulo:"Sinistro",descricao:"Análise",emoji:"🚚",cor:"#2a9d8f"}
+  {id:"incoterms",titulo:"Incoterms",descricao:"Regras internacionais de comércio",emoji:"📦",cor:"#e9c46a"},
+  {id:"sinistro",titulo:"Regulação de Sinistro",descricao:"Análise de perdas e danos",emoji:"🚚",cor:"#2a9d8f"},
+  {id:"risco",titulo:"Análise de Risco",descricao:"Identificação e prevenção",emoji:"⚠️",cor:"#f4a261"},
+  {id:"seguro",titulo:"Seguro de Transporte",descricao:"Cobertura de cargas",emoji:"📑",cor:"#8ecae6"},
+  {id:"documentos",titulo:"Documentação",descricao:"Controle logístico",emoji:"🧾",cor:"#90be6d"},
+  {id:"prevencao",titulo:"Prevenção de Perdas",descricao:"Evitar prejuízos",emoji:"🚨",cor:"#e76f51"}
 ];
 
 let temas=[];
@@ -152,12 +200,12 @@ function render(){
 
   [...padrao, ...temas].forEach(t=>{
     lista.innerHTML+=`
-      <div class="item">
+      <div class="item" style="border-left:8px solid ${t.cor}">
         <div class="info">
           <div class="icone">${t.emoji}</div>
-          <div>
-            <b>${t.titulo}</b><br>
-            <small>${t.descricao}</small>
+          <div class="texto">
+            <h2>${t.titulo}</h2>
+            <p>${t.descricao}</p>
           </div>
         </div>
 
