@@ -42,11 +42,6 @@ body{
   font-size:3rem;
 }
 
-.header p{
-  margin-top:10px;
-  color:rgba(255,255,255,0.85);
-}
-
 .intro{
   padding:20px 60px;
   max-width:900px;
@@ -65,23 +60,6 @@ body{
   border-radius:18px;
   backdrop-filter:blur(12px);
   background:rgba(255,255,255,0.08);
-  transition:0.4s;
-  position:relative;
-  overflow:hidden;
-}
-
-.item:hover{
-  transform:translateY(-6px);
-  box-shadow:0 25px 60px rgba(0,0,0,0.3);
-}
-
-.item::before{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:8px;
-  height:100%;
 }
 
 .info{
@@ -91,13 +69,6 @@ body{
 }
 
 .icone{font-size:28px;}
-
-.texto h2{font-size:1.4rem;}
-
-.texto p{
-  font-size:0.95rem;
-  color:rgba(255,255,255,0.75);
-}
 
 .botoes{
   display:flex;
@@ -109,10 +80,8 @@ body{
   border-radius:20px;
   border:none;
   cursor:pointer;
-  font-size:0.8rem;
 }
 
-/* BOTÕES */
 .editar{background:#3b82f6;color:white;}
 .acessar{background:#22c55e;color:white;}
 .excluir{background:#ef4444;color:white;}
@@ -127,12 +96,6 @@ body{
   font-size:1.2rem;
   cursor:pointer;
 }
-
-.footer{
-  text-align:center;
-  padding:25px;
-  color:rgba(255,255,255,0.6);
-}
 </style>
 </head>
 
@@ -140,26 +103,18 @@ body{
 
 <div class="header">
   <h1>Admin - Central de Conhecimento</h1>
-  <p>Gerencie todos os temas da plataforma</p>
 </div>
 
 <div class="intro">
-  Você pode criar, editar ou excluir qualquer tema.
+  Gerencie os temas da plataforma
 </div>
 
 <div class="main">
-
-  <div class="add" onclick="criarTema()">+ Adicionar novo tema</div>
-
+  <div class="add" onclick="criarTema()">+ Adicionar tema</div>
   <div id="lista"></div>
-
 </div>
 
-<div class="footer">
-  © 2026 — Nicholas Grassotti Spolavori
-</div>
-
-<!-- 🔥 FIREBASE PRIMEIRO -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
@@ -170,8 +125,7 @@ const firebaseConfig = {
   projectId: "nick-curso",
   storageBucket: "nick-curso.firebasestorage.app",
   messagingSenderId: "774707174312",
-  appId: "1:774707174312:web:e9fbf29073ce35bcbe9b9d",
-  measurementId: "G-R87PV5NDGW"
+  appId: "1:774707174312:web:e9fbf29073ce35bcbe9b9d"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -180,38 +134,30 @@ const db = firebase.database();
 /* PADRÃO */
 let padrao=[
   {id:"incoterms",titulo:"Incoterms",descricao:"Regras internacionais",emoji:"📦",cor:"#e9c46a"},
-  {id:"sinistro",titulo:"Regulação de Sinistro",descricao:"Análise de perdas",emoji:"🚚",cor:"#2a9d8f"},
-  {id:"risco",titulo:"Análise de Risco",descricao:"Prevenção",emoji:"⚠️",cor:"#f4a261"},
-  {id:"seguro",titulo:"Seguro de Transporte",descricao:"Cobertura",emoji:"📑",cor:"#8ecae6"},
-  {id:"documentos",titulo:"Documentação",descricao:"Controle",emoji:"🧾",cor:"#90be6d"},
-  {id:"prevencao",titulo:"Prevenção",descricao:"Evitar prejuízos",emoji:"🚨",cor:"#e76f51"}
+  {id:"sinistro",titulo:"Sinistro",descricao:"Análise",emoji:"🚚",cor:"#2a9d8f"}
 ];
 
 let temas=[];
 
-/* CARREGAR DO FIREBASE */
+/* CARREGAR */
 db.ref("temas").on("value", snapshot=>{
-  temas = snapshot.val() || [];
+  let dados = snapshot.val() || {};
+  temas = Object.values(dados);
   render();
 });
-
-/* JUNTA */
-function getTemas(){
-  return [...padrao, ...temas];
-}
 
 /* RENDER */
 function render(){
   lista.innerHTML="";
 
-  getTemas().forEach(t=>{
+  [...padrao, ...temas].forEach(t=>{
     lista.innerHTML+=`
-      <div class="item" style="border-left:8px solid ${t.cor}">
+      <div class="item">
         <div class="info">
           <div class="icone">${t.emoji}</div>
-          <div class="texto">
-            <h2>${t.titulo}</h2>
-            <p>${t.descricao}</p>
+          <div>
+            <b>${t.titulo}</b><br>
+            <small>${t.descricao}</small>
           </div>
         </div>
 
@@ -236,15 +182,20 @@ function editar(id){
   window.location.href="admin_editor.html";
 }
 
-function excluir(id){
-  temas = temas.filter(t=>t.id!=id);
-  db.ref("temas").set(temas);
-}
-
 function acessar(id){
-  localStorage.setItem("temaSelecionado",id);
   localStorage.setItem("editando",id);
   window.location.href="admin_conteudo.html";
+}
+
+function excluir(id){
+  temas = temas.filter(t=>t.id!=id);
+
+  let novo = {};
+  temas.forEach(t=>{
+    novo[t.id] = t;
+  });
+
+  db.ref("temas").set(novo);
 }
 </script>
 
