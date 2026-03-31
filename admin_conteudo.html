@@ -156,14 +156,17 @@ let carregado = false;
 
 /* CARREGAR */
 db.ref("temas").on("value", snapshot => {
-  temas = snapshot.val() || [];
- tema = temas.find(t => t.id == id) || temas[0];
+  let dados = snapshot.val() || {};
+  temas = Object.values(dados);
+
+  tema = temas.find(t => t.id == id) || temas[0];
+
   if (!id) {
-  alert("Nenhum tema selecionado, usando padrão");
-}
+    alert("Nenhum tema selecionado, usando padrão");
+  }
+
   carregado = true;
 });
-
   
 
 /* VOLTAR */
