@@ -123,10 +123,27 @@ button{
   © 2026 — Nicholas Grassotti Spolavori
 </div>
 
-<!-- 🔥 FIREBASE PRIMEIRO -->
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
+<!-- 🔥 CONFIGURAÇÃO (ESSENCIAL) -->
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAH0xTUWEeMqsxAIFOMTmDdhAdPHb5AkRY",
+  authDomain: "nick-curso.firebaseapp.com",
+  projectId: "nick-curso",
+  storageBucket: "nick-curso.firebasestorage.app",
+  messagingSenderId: "774707174312",
+  appId: "1:774707174312:web:e9fbf29073ce35bcbe9b9d",
+  measurementId: "G-R87PV5NDGW"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+</script>
+
+<!-- 🔥 SCRIPT PRINCIPAL -->
 <script>
 
 /* VARIÁVEIS */
@@ -135,13 +152,13 @@ let tema = null;
 const id = localStorage.getItem("editando");
 
 let tipoAtual = "";
-let carregado = false; // 🔥 NOVO
+let carregado = false;
 
-/* CARREGAR DO FIREBASE */
+/* CARREGAR */
 db.ref("temas").on("value", snapshot => {
   temas = snapshot.val() || [];
   tema = temas.find(t => t.id == id);
-  carregado = true; // 🔥 AGORA SABEMOS QUE CARREGOU
+  carregado = true;
 });
 
 /* VOLTAR */
@@ -171,7 +188,6 @@ function abrirForm(tipo){
 /* SALVAR */
 function salvar(){
 
-  // 🔥 BLOQUEIO IMPORTANTE
   if(!carregado){
     alert("Aguarde o sistema carregar...");
     return;
@@ -215,12 +231,11 @@ function salvar(){
     return;
   }
 
-  // texto simples
   tema.texto = texto.value;
   salvarFinal();
 }
 
-/* SALVAR FINAL */
+/* FINAL */
 function salvarFinal(){
   db.ref("temas").set(temas);
   alert("Conteúdo salvo com sucesso!");
