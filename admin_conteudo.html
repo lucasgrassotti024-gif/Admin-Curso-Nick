@@ -185,19 +185,37 @@ function abrirForm(tipo){
   tipoAtual = tipo;
   form.style.display = "block";
 
-linkVideo.style.display = "none";
-linkImagem.style.display = "none";
-linkPdf.style.display = "none";
+  linkVideo.style.display = "none";
+  linkImagem.style.display = "none";
+  linkPdf.style.display = "none";
   texto.style.display = "none";
 
   if(tipo==="video") linkVideo.style.display="block";
   if(tipo==="apresentacao") linkImagem.style.display="block";
   if(tipo==="ebook"){
-  linkPdf.style.display="block";
-  texto.style.display="block";
+    linkPdf.style.display="block";
+    texto.style.display="block";
+  }
+
+  // 🔥 AGORA SIM (DENTRO DA FUNÇÃO)
+  if(tema){
+
+    if(tipo==="video"){
+      linkVideo.value = tema.video || "";
+    }
+
+    if(tipo==="apresentacao"){
+      linkImagem.value = tema.imagem || "";
+    }
+
+    if(tipo==="ebook"){
+      linkPdf.value = tema.pdf || "";
+      texto.value = tema.texto || "";
+    }
+
   }
 }
-
+  
 /* SALVAR */
 function salvar(){
 
@@ -239,7 +257,7 @@ function salvarFinal(){
   });
 
   db.ref("temas").set(novo);
-  alert("Conteúdo salvo com sucesso!");
+  alert("✅ Link salvo com sucesso!");
 }
 
 </script>
