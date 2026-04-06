@@ -110,9 +110,9 @@ button{
   </div>
 
   <div class="form" id="form">
-    <input type="file" id="fileVideo" accept="video/*">
-    <input type="file" id="fileImagem" accept="image/*">
-    <input type="file" id="filePdf" accept=".pdf">
+    <input id="linkVideo" placeholder="Cole o link do vídeo">
+<input id="linkImagem" placeholder="Cole o link da imagem">
+<input id="linkPdf" placeholder="Cole o link do PDF">
     <textarea id="texto" placeholder="Texto do e-book"></textarea>
     <button onclick="salvar()">Salvar Conteúdo</button>
   </div>
@@ -159,11 +159,16 @@ db.ref("temas").on("value", snapshot => {
   let dados = snapshot.val() || {};
   temas = Object.values(dados);
 
-  tema = temas.find(t => t.id == id) || temas[0];
+ tema = temas.find(t => t.id == id);
 
-  if (!id) {
-    alert("Nenhum tema selecionado, usando padrão");
+if (!tema) {
+  if (temas.length > 0) {
+    tema = temas[0];
+  } else {
+    tema = { id: Date.now() };
+    temas.push(tema);
   }
+}
 
   carregado = true;
 });
@@ -180,16 +185,16 @@ function abrirForm(tipo){
   tipoAtual = tipo;
   form.style.display = "block";
 
-  fileVideo.style.display = "none";
-  fileImagem.style.display = "none";
-  filePdf.style.display = "none";
+linkVideo.style.display = "none";
+linkImagem.style.display = "none";
+linkPdf.style.display = "none";
   texto.style.display = "none";
 
-  if(tipo==="video") fileVideo.style.display="block";
-  if(tipo==="apresentacao") fileImagem.style.display="block";
+  if(tipo==="video") linkVideo.style.display="block";
+  if(tipo==="apresentacao") linkImagem.style.display="block";
   if(tipo==="ebook"){
-    filePdf.style.display="block";
-    texto.style.display="block";
+  linkPdf.style.display="block";
+  texto.style.display="block";
   }
 }
 
@@ -206,40 +211,23 @@ function salvar(){
     return;
   }
 
-  const videoFile = document.getElementById("fileVideo").files[0];
-  const imagemFile = document.getElementById("fileImagem").files[0];
-  const pdfFile = document.getElementById("filePdf").files[0];
+  const video = document.getElementById("linkVideo").value;
+  const imagem = document.getElementById("linkImagem").value;
+  const pdf = document.getElementById("linkPdf").value;
 
-  const reader = new FileReader();
-
-  if(tipoAtual==="video" && videoFile){
-    reader.onload = e=>{
-      tema.video = e.target.result;
-      salvarFinal();
-    };
-    reader.readAsDataURL(videoFile);
-    return;
+  if(tipoAtual==="video" && video){
+    tema.video = video;
   }
 
-  if(tipoAtual==="apresentacao" && imagemFile){
-    reader.onload = e=>{
-      tema.imagem = e.target.result;
-      salvarFinal();
-    };
-    reader.readAsDataURL(imagemFile);
-    return;
+  if(tipoAtual==="apresentacao" && imagem){
+    tema.imagem = imagem;
   }
 
-  if(tipoAtual==="ebook" && pdfFile){
-    reader.onload = e=>{
-      tema.pdf = e.target.result;
-      salvarFinal();
-    };
-    reader.readAsDataURL(pdfFile);
-    return;
+  if(tipoAtual==="ebook"){
+    if(pdf) tema.pdf = pdf;
+    tema.texto = texto.value;
   }
 
-  tema.texto = texto.value;
   salvarFinal();
 }
 
